@@ -6,6 +6,8 @@ from pathlib import Path
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Cm, Pt, RGBColor
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 
 HERE = Path(__file__).parent
 GRAF = HERE / "graficas"
@@ -76,6 +78,19 @@ def tabla(filas):
   doc.add_paragraph()
 
 
+def enlace(par, url, size=None):
+  # hipervínculo azul y subrayado al final del párrafo
+  h = OxmlElement("w:hyperlink")
+  h.set(qn("r:id"), par.part.relate_to(url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True))
+  r = par.add_run(url)
+  r.font.color.rgb = RGBColor(0x05, 0x63, 0xC1)
+  r.font.underline = True
+  if size:
+    r.font.size = Pt(size)
+  h.append(r._r)
+  par._p.append(h)
+
+
 def figura(nombre, pie, ancho=15):
   doc.add_picture(str(GRAF / nombre), width=Cm(ancho))
   doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -88,7 +103,7 @@ guardar_salidas()
 p(TITLE, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, size=18)
 p(AUTHORS, align=WD_ALIGN_PARAGRAPH.CENTER)
 p(SUBJ, italic=True, align=WD_ALIGN_PARAGRAPH.CENTER, size=10)
-p(f"Repositorio con el código, las gráficas y las salidas: {URL}", align=WD_ALIGN_PARAGRAPH.CENTER, size=10)
+enlace(p("Repositorio con el código, las gráficas y las salidas: ", align=WD_ALIGN_PARAGRAPH.CENTER, size=10), URL, size=10)
 
 # Parte 1
 doc.add_heading("1. Revisión conceptual", level=1)
@@ -175,7 +190,9 @@ doc.add_heading("Conclusiones", level=1)
 p("Con una carga aleatoria grande FCFS mueve la cabeza entre 170 y 330 veces más que SCAN y C-SCAN, así que solo resulta razonable cuando hay muy pocos pedidos en cola. SCAN fue el que menos movió la cabeza en todas las pruebas, mientras que C-SCAN se movió un poco más por el regreso, pero su costo no depende de la posición inicial y reparte mejor la espera cuando los pedidos llegan de forma continua.")
 
 doc.add_heading("Anexo. Código de la visualización", level=1)
-p(f"Código de lab3Punto3.py, que genera las gráficas de la parte 3 a partir de las funciones de lab3Punto2.py. Requiere matplotlib y se ejecuta con python lab3Punto3.py <cabeza> [--semilla N]. Los dos programas también están en el repositorio {URL}.")
+p(f"Código de lab3Punto3.py, que genera las gráficas de la parte 3 a partir de las funciones de lab3Punto2.py. Requiere matplotlib y se ejecuta con python lab3Punto3.py <cabeza> [--semilla N]. Los dos programas también están en el repositorio ")
+enlace(doc.paragraphs[-1], URL)
+doc.paragraphs[-1].add_run(".")
 code((HERE / "lab3Punto3.py").read_text(encoding="utf-8"), size=7.5)
 
 doc.save(HERE / "informe.docx")
