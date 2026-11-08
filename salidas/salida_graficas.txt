@@ -1,0 +1,5 @@
+Algoritmo      Total  Resp. prom  Resp. max  Desv. est.
+FCFS        1672704      839648    1672704      478575
+SCAN           7845        3637       7845        2735
+C-SCAN         9993        4552       9993        3788
+Graficas guardadas en C:\Users\nicol\Documents\importante_nicolas\semestre8\sisope\lab3\graficas

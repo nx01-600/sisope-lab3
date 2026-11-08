@@ -1,0 +1,4 @@
+Cabeza inicial: 4900 | Requests: 1000 | Cilindros: 0-4999
+FCFS   :   1675454 cilindros
+SCAN   :      5095 cilindros
+C-SCAN :      9997 cilindros
